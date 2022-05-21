@@ -1,5 +1,5 @@
 body {
-    background-color: #16162a;
+    background-color: white;
     height: auto;
     background-position: center;
     background-repeat: no-repeat;
@@ -12,6 +12,7 @@ body {
 
 .container {
     display: flex;
+    height: 50vh;
     justify-content: center;
     align-items: center;
     flex-direction: column;
