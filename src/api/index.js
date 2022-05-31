@@ -18,13 +18,15 @@ export async function getClanId(clan) {
 
 export async function getClanMapData(id) {
     let adjMap = new Map();
-    const data = await fetch(`https://api.worldoftanks.com/wot/clans/info/?application_id=${api_key}&clan_id=${id}`, {
+    let uniqueClans = [];
+    let clanData = [];
+    const clanInfo = await fetch(`https://api.worldoftanks.com/wot/clans/info/?application_id=${api_key}&clan_id=${id}`, {
         method: 'GET'
     }).then((response) => response.json())
         .then((result) => {
             return result.data;
         });
-    const clanMembers = data[id]['members'];
+    const clanMembers = clanInfo[id]['members'];
     for (const member of clanMembers) {
         const member_id = member.account_id;
         const clanHistory = await fetch(`https://api.worldoftanks.com/wot/clans/memberhistory/?application_id=${api_key}&account_id=${member_id}`, {
@@ -33,11 +35,20 @@ export async function getClanMapData(id) {
             .then((result) => {
                 return result.data;
             });
-        console.log(clanHistory);
         let currClan = id;
         for (const clan of clanHistory[member_id]) {
             const clan_id = clan.clan_id;
             const arr = [clan_id, currClan];
+            if (!uniqueClans.includes(clan_id)) {
+                uniqueClans.push(clan_id);
+                const query = await fetch(`https://api.worldoftanks.com/wot/clans/info/?application_id=${api_key}&clan_id=${clan_id}`, {
+                    method: 'GET'
+                }).then((response) => response.json())
+                    .then((result) => {
+                        return result.data;
+                    });
+                clanData.push(query[clan_id.toString()]);
+            }
             if (!(arr in adjMap)) {
                 adjMap.set([clan_id, currClan], 1);
                 currClan = clan_id;
@@ -48,6 +59,6 @@ export async function getClanMapData(id) {
             }
         }
     }
-    console.log(adjMap);
-    return adjMap;
+    console.log(clanData);
+    return [adjMap, clanData];
 }
