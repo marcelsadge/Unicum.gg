@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import ForceGraph3D from 'react-force-graph-3d';
+import SpriteText from 'three-spritetext';
 
 import { getClanMapData, getClanId } from '../../api/index.js';
 
@@ -38,13 +39,12 @@ function ClanMap() {
             };
             edgeArray.push(temp);
         }
-        console.log(uniqueClans)
         const uniqueNodes = uniqueClans.map((clan) => ({
             id: clan.clan_id,
             name: clan.tag,
-            img: `https://na.wargaming.net/clans/media/clans/emblems/cl_369/${clan.clan_id}/emblem_256x256.png`,
+            color: clan.color,
+            img: `https://na.wargaming.net/clans/media/clans/emblems/cl_476/${clan.clan_id}/emblem_256x256.png`,
         }));
-        console.log(uniqueNodes);
         return {
             nodes: uniqueNodes,
             links: edgeArray
@@ -68,8 +68,16 @@ function ClanMap() {
             {loading ? <h1>Loading...</h1> : 
             <ForceGraph3D
                 graphData={generateClanGraph()}
+                nodeThreeObject={(node) => {
+                    const sprite = new SpriteText(node.name, 5);
+                    sprite.color = node.color;
+                    sprite.padding = [8, 4];
+                    sprite.textHeight = 5;
+                    sprite.borderRadius = 10;
+                    return sprite;
+                }}
                 linkDirectionalParticles={1}
-                linkDirectionalParticleWidth={2}
+                linkDirectionalParticleWidth={1}
                 linkDirectionalParticleColor={() => "red"}
             />
             }
