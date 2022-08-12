@@ -1,3 +1,4 @@
+import { wn8Formula } from "./util";
 
 const api_key = 'a1ade2adb0a147e81c3115c498bbb1c7';
 
@@ -94,49 +95,75 @@ export async function getPlayerStatistics(player_id) {
         .then((result) => {
             return result.data;
         });
+    const plyrStats = calculateOverallWN8(player_id, valuesMap, playerStats);
+    return plyrStats;
+}
+
+export async function calculateOverallWN8(player_id, valuesMap, playerStats) {
     let stats = {};
+    let totalDamage = 0;
+    let totalFrags = 0;
+    let totalSpots = 0;
+    let totalDef = 0;
+    let totalWr = 0;
+    let totalExpDamage = 0;
+    let totalExpFrag = 0;
+    let totalExpSpot = 0;
+    let totalExpDef = 0;
+    let totalExpWr = 0;
     const vehicles = playerStats[player_id];
     for (const element in vehicles) {
-        const focus = vehicles[element]['all'];
-        if (focus['battles'] !== 0) {
+        const tank = vehicles[element]['all'];
+        if (tank['battles'] !== 0) {
             let currVehicle = {};
-            currVehicle['avg_dmg'] = focus['damage_dealt'] / focus['battles'];
-            currVehicle['avg_spots'] = focus['spotted'] / focus['battles'];
-            currVehicle['avg_frag'] = focus['frags'] / focus['battles'];
-            currVehicle['avg_def'] = focus['dropped_capture_points'] / focus['battles'];
-            currVehicle['wr'] = focus['wins'] / focus['battles'];
-
             const vehicleExp = valuesMap.get(vehicles[element]['tank_id']);
             if (vehicleExp) {
-                const DAMAGEr   = currVehicle['avg_dmg'] / vehicleExp.expDamage;
-                const SPOTr     = currVehicle['avg_spots'] / vehicleExp.expSpot;
-                const FRAGr     = currVehicle['avg_frag'] / vehicleExp.expFrag;
-                const DEFr      = currVehicle['avg_def'] / vehicleExp.expDef;
-                const WINr      = currVehicle['wr'] * 100 / vehicleExp.expWinRate;
+                currVehicle['avg_dmg'] = tank['damage_dealt'] / tank['battles'];
+                currVehicle['avg_spots'] = tank['spotted'] / tank['battles'];
+                currVehicle['avg_frag'] = tank['frags'] / tank['battles'];
+                currVehicle['avg_def'] = tank['dropped_capture_points'] / tank['battles'];
+                currVehicle['wr'] = tank['wins'] / tank['battles'];
 
-                const WINc     = Math.max(0, (WINr - 0.71) / (1 - 0.71));
-                const DAMAGEc  = Math.max(0, (DAMAGEr - 0.22) / (1 - 0.22));
-                const FRAGc    = Math.max(0, Math.min(DAMAGEr + 0.2, (FRAGr - 0.12) / (1 - 0.12)));
-                const SPOTc    = Math.max(0, Math.min(DAMAGEr + 0.1, (SPOTr - 0.38) / (1 - 0.38)));
-                const DEFc     = Math.max(0, Math.min(DAMAGEr + 0.1, (DEFr - 0.1) / (1 - 0.1)));
+                totalDamage += tank['damage_dealt'];
+                totalFrags += tank['frags'];
+                totalSpots += tank['spotted'];
+                totalDef += tank['dropped_capture_points'];
+                totalWr += (currVehicle['wr'] * 100) * tank['battles'];
 
-                const WN8 =
-                    980 * DAMAGEc +
-                    210 * DAMAGEc * FRAGc +
-                    155 * FRAGc * SPOTc +
-                    75 * DEFc * FRAGc +
-                    145 * Math.min(1.8, WINc);
+                totalExpDamage += vehicleExp.expDamage * tank['battles'];
+                totalExpFrag += vehicleExp.expFrag * tank['battles'];
+                totalExpSpot += vehicleExp.expSpot * tank['battles'];
+                totalExpDef += vehicleExp.expDef * tank['battles'];
+                totalExpWr += vehicleExp.expWinRate * tank['battles'];
 
-                stats[vehicles[element]['tank_id']] = { 
-                    'wn8': WN8, 
-                    'avg_dmg': currVehicle['avg_dmg'],
-                    'avg_spots': currVehicle['avg_spots'],
-                    'avg_frag': currVehicle['avg_frag'],
-                    'avg_def': currVehicle['avg_def'],
-                    'wr': currVehicle['wr'],
-                };
+                if (vehicleExp) {
+                    const WN8 = wn8Formula(currVehicle['avg_dmg'], currVehicle['avg_spots'], currVehicle['avg_frag'], 
+                        currVehicle['avg_def'], currVehicle['wr'] * 100, vehicleExp.expDamage, vehicleExp.expSpot,
+                            vehicleExp.expFrag, vehicleExp.expDef, vehicleExp.expWinRate);
+                    stats[vehicles[element]['tank_id']] = { 
+                        'wn8': WN8, 
+                        'avg_dmg': currVehicle['avg_dmg'],
+                        'avg_spots': currVehicle['avg_spots'],
+                        'avg_frag': currVehicle['avg_frag'],
+                        'avg_def': currVehicle['avg_def'],
+                        'wr': currVehicle['wr'],
+                    };
+                }
             }
         }
     }
+    const overallWN8 = wn8Formula(totalDamage, totalSpots, totalFrags, totalDef, totalWr,
+            totalExpDamage, totalExpSpot, totalExpFrag, totalExpDef, totalExpWr);
+    stats['overallWn8'] = overallWN8;
     return stats;
+}
+
+export async function getPlayerOverallStats(player_id) {
+    const overallStats = await fetch(`https://api.worldoftanks.com/wot/account/info/?application_id=${api_key}&account_id=${player_id}`, {
+        method: 'GET'
+    }).then((response) => response.json())
+        .then((result) => {
+            return result.data;
+        });
+    return overallStats;
 }
