@@ -2,6 +2,18 @@ import { wn8Formula } from "./util";
 
 const api_key = 'a1ade2adb0a147e81c3115c498bbb1c7';
 
+export async function getTankNameById() {
+    const vehicleInfo = await fetch(`https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=${api_key}`, {
+            method: 'GET'
+        }).then((response) => response.json())
+            .then((result) => {
+                return result.data;
+            });
+    for (const tank in vehicleInfo) {
+        localStorage.setItem(tank, vehicleInfo[tank]['short_name']);
+    }
+}
+
 export async function getClanId(clan) {
     const data = await fetch(`https://api.worldoftanks.com/wot/clans/list/?application_id=${api_key}&search=${clan}`, {
         method: 'GET'
@@ -72,7 +84,7 @@ export async function getPlayerId(player) {
         });
     for (const element in id) {
         if (id[element]['nickname'].toLowerCase() === player) {
-            return id[element]['account_id'];
+            return [id[element]['account_id'], id[element]['nickname']];
         }
     }
     return '';
@@ -100,7 +112,8 @@ export async function getPlayerStatistics(player_id) {
 }
 
 export async function calculateOverallWN8(player_id, valuesMap, playerStats) {
-    let stats = {};
+    let res = {};
+    let tankList = [];
     let totalDamage = 0;
     let totalFrags = 0;
     let totalSpots = 0;
@@ -140,22 +153,26 @@ export async function calculateOverallWN8(player_id, valuesMap, playerStats) {
                     const WN8 = wn8Formula(currVehicle['avg_dmg'], currVehicle['avg_spots'], currVehicle['avg_frag'], 
                         currVehicle['avg_def'], currVehicle['wr'] * 100, vehicleExp.expDamage, vehicleExp.expSpot,
                             vehicleExp.expFrag, vehicleExp.expDef, vehicleExp.expWinRate);
-                    stats[vehicles[element]['tank_id']] = { 
+                    tankList.push({
+                        'tank_id': vehicles[element]['tank_id'],
+                        'name': localStorage.getItem(vehicles[element]['tank_id']),
                         'wn8': WN8, 
                         'avg_dmg': currVehicle['avg_dmg'],
                         'avg_spots': currVehicle['avg_spots'],
                         'avg_frag': currVehicle['avg_frag'],
                         'avg_def': currVehicle['avg_def'],
                         'wr': currVehicle['wr'],
-                    };
+                    })
                 }
             }
         }
+        
     }
     const overallWN8 = wn8Formula(totalDamage, totalSpots, totalFrags, totalDef, totalWr,
             totalExpDamage, totalExpSpot, totalExpFrag, totalExpDef, totalExpWr);
-    stats['overallWn8'] = overallWN8;
-    return stats;
+    res['tankData'] = tankList;
+    res['overallWn8'] = overallWN8;
+    return res;
 }
 
 export async function getPlayerOverallStats(player_id) {

@@ -10,9 +10,9 @@ function SearchBar() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (type === 'PLYR') {
-            navigation('/playerstat', { state: { playerName: search.toLowerCase() } });
+            navigation('/playerstat', { state: { playerName: search } });
         } else {
-            navigation('/clanmap', { state: { clanName: search.toUpperCase() } });
+            navigation('/clanmap', { state: { clanName: search } });
         }
     };
 
@@ -29,7 +29,7 @@ function SearchBar() {
             <form onSubmit={handleSubmit}>
                 <input 
                     className='search-bar'
-                    placeholder='Enter Clan Name'
+                    placeholder={type === 'PLYR' ? 'Enter Player Name' : 'Enter Clan Name'}
                     type='text' 
                     value={search} 
                     onChange={(e) => setSearch(e.target.value)}

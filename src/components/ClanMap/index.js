@@ -15,7 +15,7 @@ function ClanMap() {
     const location = useLocation();
 
     const getData = async () => {
-        const id = await getClanId(location.state.clanName);
+        const id = await getClanId(location.state.clanName.toUpperCase());
         if (isMounted.current) {
             setClanId(id);
             const results = await getClanMapData(id)

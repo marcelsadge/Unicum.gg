@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { ClipLoader } from 'react-spinners';
 
-import { getPlayerId, getPlayerStatistics } from '../../api/index.js';
+import { getPlayerId, getPlayerStatistics, getTankNameById } from '../../api/index.js';
 
 const loadingContainer = {
     display: 'flex', 
@@ -14,20 +14,28 @@ const loadingContainer = {
 
 function PlayerPage() {
     const [loading, setLoading] = useState(false);
-    const [playerData, setPlayerData] = useState([]);
+    const [name, setName] = useState('');
+    const [wn8, setWn8] = useState([]);
+    const [tankData, setTankData] = useState([]);
 
     const location = useLocation();
 
     const getPlayerData = async () => {
-        const player_id = await getPlayerId(location.state.playerName);
-        const playerJson = await getPlayerStatistics(player_id)
+        const player = await getPlayerId(location.state.playerName.toLowerCase());
+        setName(player[1]);
+        await getPlayerStatistics(player[0])
             .then((response) => {
                 console.log(response);
+                setWn8(response['overallWn8']);
+                setTankData(response['tankData']);
                 setLoading(false);
             });
     };
 
     useEffect(() => {
+        if (!localStorage.getItem("1")) {
+            getTankNameById();
+        }
         setLoading(true);
         getPlayerData();
     }, []);
@@ -44,7 +52,23 @@ function PlayerPage() {
                     />
                 </div>
                 :
-                <h1>Loaded</h1>
+                <div>
+                    <h2>
+                        Name: {name}
+                        <br/>
+                    </h2>
+                    <h3>
+                        WN8: {Math.floor(wn8)}
+                        <br/>
+                        {tankData.map((tank) => {
+                            return (
+                                <ui>
+                                    {tank['name']}:{Math.floor(tank['wn8'])}<br/>
+                                </ui>
+                            );
+                        })}
+                    </h3>
+                </div>
             }
         </div>
     );
