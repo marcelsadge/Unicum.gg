@@ -1,14 +1,27 @@
+.search-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
 .search-bar {
     display: flex;
     width: 750px;
     height: 50px;
     border-radius: 10px;
-    background-color: #2d2055;
+    background-color: white;
     align-items: center;
+    outline: none;
 }
 
-.search-label {
-    margin-left: 20px;
-    font-weight: bold;
-    color: gray;
+input[type='text'] {
+    padding-left: 20px;
+    font-size: 16px;
+    color: black;
 }
+
+input[type='text']::placeholder {
+    font-size: 16px;
+    font-weight: bold;
+}
+
