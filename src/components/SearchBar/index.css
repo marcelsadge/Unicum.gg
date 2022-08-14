@@ -1,27 +1,16 @@
-.search-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-.search-bar {
-    display: flex;
-    width: 750px;
-    height: 50px;
-    border-radius: 10px;
-    background-color: white;
-    align-items: center;
-    outline: none;
-}
+@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
 
 input[type='text'] {
     padding-left: 20px;
     font-size: 16px;
-    color: black;
+    font-family: 'Secular One';
+    color: #fff;
 }
 
 input[type='text']::placeholder {
     font-size: 16px;
     font-weight: bold;
+    font-family: 'Secular One';
+    color: #fff;
 }
 

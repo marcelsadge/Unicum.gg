@@ -1,9 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
+
 body {
-    background-color: white;
+    font-family: 'Secular One';
+    background-color: #111111;
     height: auto;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 .header {
@@ -12,7 +21,7 @@ body {
 
 .container {
     display: flex;
-    height: 50vh;
+    height: 75vh;
     justify-content: center;
     align-items: center;
     flex-direction: column;
