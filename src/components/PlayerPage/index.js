@@ -2,14 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ClipLoader } from 'react-spinners';
+import styled from 'styled-components';
 
 import { getPlayerId, getPlayerStatistics, getTankNameById } from '../../api/index.js';
 
-const loadingContainer = {
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    height: '90vh',
+const Loader = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+`
+
+const PlayerContainer = styled.div`
+    display: flex;
+    padding: 5px;
+`
+
+const statContainer = {
+
 };
 
 function PlayerPage() {
@@ -44,31 +54,16 @@ function PlayerPage() {
         <div>
             {
                 loading ? 
-                <div style={loadingContainer}>
+                <Loader>
                     <ClipLoader
                         size={150}
-                        color={'#123abc'}
+                        color={'white'}
                         loading={loading}
                     />
-                </div>
+                </Loader>
                 :
-                <div>
-                    <h2>
-                        Name: {name}
-                        <br/>
-                    </h2>
-                    <h3>
-                        WN8: {Math.floor(wn8)}
-                        <br/>
-                        {tankData.map((tank) => {
-                            return (
-                                <ui>
-                                    {tank['name']}:{Math.floor(tank['wn8'])}<br/>
-                                </ui>
-                            );
-                        })}
-                    </h3>
-                </div>
+                <PlayerContainer>
+                </PlayerContainer>
             }
         </div>
     );
