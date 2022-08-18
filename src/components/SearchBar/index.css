@@ -1,16 +1,1 @@
 @import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
-
-input[type='text'] {
-    padding-left: 20px;
-    font-size: 16px;
-    font-family: 'Secular One';
-    color: #fff;
-}
-
-input[type='text']::placeholder {
-    font-size: 16px;
-    font-weight: bold;
-    font-family: 'Secular One';
-    color: #fff;
-}
-

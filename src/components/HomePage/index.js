@@ -1,16 +1,14 @@
 import React from 'react';
 
 import SearchBar from '../SearchBar';
-import NavBar from '../NavBar';
 import './index.css';
 
 function HomePage() {
     return(
         <div>
-            <NavBar />
             <div className='container'>
-                <h1 style={{ color: '#fff', fontSize: 36 }}>
-                    Unicum.gg
+                <h1 style={{ color: '#fff', fontSize: 100 }}>
+                    Insert Title
                 </h1>
                 <div className='search-bar-container'>
                     <SearchBar
