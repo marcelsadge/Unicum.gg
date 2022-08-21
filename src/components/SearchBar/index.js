@@ -62,7 +62,6 @@ function SearchBar() {
     const navigation = useNavigate();
 
     const serverArray = ['NA', 'EU', 'ASIA'];
-    const typeArray = ['PLYR', 'CLAN'];
 
     const serverOptions = [
         { server: 'NA', value: '1' },

@@ -4,25 +4,57 @@ import { useLocation } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import styled from 'styled-components';
 
-import { getPlayerId, getPlayerStatistics, getTankNameById } from '../../api/index.js';
+import { getPlayerId, getPlayerStatistics, getTankNameById } from '../../backend/api/index.js';
 
 const Loader = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 75vh;
 `
 
-const PlayerContainer = styled.div`
+const PlayerPage = styled.div`
     display: flex;
-    padding: 5px;
+    justify-content: center;
+    flex-direction: column;
+`
+
+const TextFont = styled.div`
+    font-size: ${({ $font }) => $font} !important;
+    color: white;
+`
+
+const TopStats = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+`
+
+const StatsContainer = styled.div`
+    display: flex;
+    font-size: 36px;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+`
+
+const RecentStats = styled.div`
+`
+
+const NameContainer = styled.div`
+    display: flex;
+    justify-content: left;
+    font-size: 52px;
+    color: white;
+    margin-left: 100px;
 `
 
 const statContainer = {
 
 };
 
-function PlayerPage() {
+function PlayerStatsPage() {
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [wn8, setWn8] = useState([]);
@@ -52,8 +84,7 @@ function PlayerPage() {
 
     return (
         <div>
-            {
-                loading ? 
+            {loading ? 
                 <Loader>
                     <ClipLoader
                         size={150}
@@ -62,12 +93,41 @@ function PlayerPage() {
                     />
                 </Loader>
                 :
-                <PlayerContainer>
-                </PlayerContainer>
+                <PlayerPage>
+                    <TopStats>
+                        <NameContainer>
+                            {name}
+                        </NameContainer>
+                        <StatsContainer>
+                            <TextFont $font={'18px'}>
+                                Recent WN8: <br />
+                            </TextFont>
+                            ---
+                        </StatsContainer>
+                        <StatsContainer>
+                            <TextFont $font={'18px'}>
+                                Recent Win Rate: <br />
+                            </TextFont>
+                            ---
+                        </StatsContainer>
+                        <StatsContainer>
+                            <TextFont $font={'18px'}>
+                                Overall WN8: <br />
+                            </TextFont>
+                            {Math.floor(wn8)}
+                        </StatsContainer>
+                        <StatsContainer>
+                            <TextFont $font={'18px'}>
+                                Win Rate: <br />
+                            </TextFont>
+                            {Math.floor(wn8)}
+                        </StatsContainer>
+                    </TopStats>
+                </PlayerPage>
             }
         </div>
     );
 
 }
 
-export default PlayerPage;
+export default PlayerStatsPage;

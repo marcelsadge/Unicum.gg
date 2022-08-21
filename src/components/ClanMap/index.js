@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 
-import { getClanMapData, getClanId } from '../../api/index.js';
+import { getClanMapData, getClanId } from '../../backend/api/index.js';
 
 function ClanMap() {
     const isMounted = useRef(false);
@@ -67,7 +67,7 @@ function ClanMap() {
         <div>
             {loading ? <h1>Loading...</h1> : 
             <ForceGraph3D
-                graphData={generateClanGraph()}
+                graphData={generateClanGraph}
                 nodeThreeObject={(node) => {
                     const sprite = new SpriteText(node.name, 5);
                     sprite.color = node.color;
